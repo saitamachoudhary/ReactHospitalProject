@@ -5,6 +5,7 @@ import { Breadcrumb, Layout, Menu, theme } from 'antd';
 const { Header, Content, Footer } = Layout;
 import Headernav from './Component/Header';
 import Content1 from './Component/ContentComponent/Content1';
+import Content2 from './Component/ContentComponent/Content2';
 const App = () => {
   const {
     token: { colorBgContainer, borderRadiusLG },
@@ -26,6 +27,7 @@ const App = () => {
           }}
         >
           <Content1/>
+          <Content2/>
         </div>
       </Content>
       <Footer
