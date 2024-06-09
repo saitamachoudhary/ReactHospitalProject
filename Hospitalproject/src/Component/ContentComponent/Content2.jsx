@@ -46,8 +46,8 @@ const Content2 = () => (
                     <p style={{ fontWeight: '500' }}>Happy Patients</p>
                 </Card>
                 <Card style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textAlign: 'center', padding:'10px 25px',marginTop: '15px',marginLeft:'30px'}}>
-                    <Typography.Title style={{ color: '#3758F9', marginTop: '0' }} level={4}>2981+</Typography.Title>
-                    <p style={{ fontWeight: '500' }}>Happy Patients</p>
+                    <Typography.Title style={{ color: '#3758F9', marginTop: '0' }} level={4}>12+</Typography.Title>
+                    <p style={{ fontWeight: '500' }}>Experience</p>
                 </Card>
                 </div>
             </Flex>

@@ -1,3 +1,10 @@
 *{
     /* font-family: sans-serif; */
 }
+
+
+.card:hover{
+    color: white;
+    background-color: #3758F9;
+    cursor: pointer;
+}

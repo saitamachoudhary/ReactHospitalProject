@@ -6,6 +6,9 @@ const { Header, Content, Footer } = Layout;
 import Headernav from './Component/Header';
 import Content1 from './Component/ContentComponent/Content1';
 import Content2 from './Component/ContentComponent/Content2';
+import Content3 from './Component/ContentComponent/Content3';
+import Content4 from './Component/ContentComponent/Content4';
+import Content5 from './Component/ContentComponent/Content5';
 const App = () => {
   const {
     token: { colorBgContainer, borderRadiusLG },
@@ -28,6 +31,8 @@ const App = () => {
         >
           <Content1/>
           <Content2/>
+          <Content3/>
+          <Content4/>
         </div>
       </Content>
       <Footer
@@ -35,7 +40,7 @@ const App = () => {
           textAlign: 'center',
         }}
       >
-        Ant Design ©{new Date().getFullYear()} Created by Ant UED
+      <Content5/>
       </Footer>
     </Layout>
   );
