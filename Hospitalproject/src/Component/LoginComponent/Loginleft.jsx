@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Button, Checkbox, Form, Input } from 'antd';
+import { useNavigate } from 'react-router-dom';
 const onFinish = (values) => {
     console.log('Success:', values);
   };
@@ -7,8 +8,21 @@ const onFinish = (values) => {
     console.log('Failed:', errorInfo);
   };
 
-const Loginleft = () => (
-    <div style={{ height: '', width: '60vw',display:'flex',alignItems:'center',justifyContent:'center'}}>
+const Loginleft = () =>{
+   const[Data,setData]=React.useState(JSON.parse(localStorage.getItem("formData")));
+   const[email,setemail]=React.useState('abc');
+   const[password,setpassword]=React.useState('');
+   const navigate=useNavigate();
+   const check=()=>{
+     if(Data.Email===email&&Data.Password===password){
+      navigate('/');
+     }
+     else{
+      alert('try again');
+     }
+   }
+    return(
+      <div style={{ height: '', width: '60vw',display:'flex',alignItems:'center',justifyContent:'center'}}>
        <Form
     name="basic"
     style={{
@@ -33,7 +47,7 @@ const Loginleft = () => (
         },
       ]}
     >
-      <Input />
+      <Input value={email} onChange={(e)=>setemail(e.target.value)}/>
     </Form.Item>
 
     <Form.Item
@@ -46,7 +60,7 @@ const Loginleft = () => (
         },
       ]}
     >
-      <Input.Password />
+      <Input.Password value={password} onChange={(e)=>setpassword(e.target.value)} />
     </Form.Item>
 
     <Form.Item>
@@ -61,7 +75,7 @@ const Loginleft = () => (
 
     <Form.Item
     >
-      <Button type="primary" htmlType="submit">
+      <Button type="primary" htmlType="submit" onClick={check}>
         Submit
       </Button>
     </Form.Item>
@@ -74,7 +88,8 @@ const Loginleft = () => (
     <p>Don't have an account yet?<a style={{color:'#00B934',marginLeft:'2px'}}>SignUp</a></p>
   </Form>
     </div>
-);
+    )
+  }
 
 
 export default Loginleft;

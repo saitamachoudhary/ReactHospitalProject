@@ -1,5 +1,8 @@
 import React from "react";
 import { Layout,Menu} from "antd";
+import DropdownProfile from "./DropDownProfile";
+import {Link} from 'react-router-dom'
+import DropDownDoc from "./DropDownDoc";
 const{Header}=Layout;
 
 
@@ -8,12 +11,16 @@ const Headernav=()=>{
         {key:1,label:'Home'},
         {key:2,label:'About us'},
         {key:3,label:'Services'},
-        {key:4,label:'Doctors'},
+        {key:4,label:<DropDownDoc/>},
         {key:5,label:'Contact us'},
       ]
       const NavItem2=[
-        {key:1,label:<a style={{color:'green'}}>Login</a>},
-        {key:2,label:<a style={{color:'blue'}}>Register</a>}
+        // {key:1,label:<a style={{color:'green'}}>Login</a>},
+        {key:1,label:<Link style={{color:'green'}} to='/Login'>Login</Link>},
+        {key:2,label:<Link style={{color:'blue'}} to='/Register'>Register</Link>},
+      ]
+      const DatanavItem=[
+        {key:1,label:<DropdownProfile/>}
       ]
     return(
         <Header
@@ -49,7 +56,7 @@ const Headernav=()=>{
           // theme="dark"
           mode="horizontal"
           // defaultSelectedKeys={['2']}
-          items={NavItem2}
+          items={(localStorage.getItem("formData"))?DatanavItem:NavItem2}
           style={{
             flex: 0.7,
             minWidth: 0,

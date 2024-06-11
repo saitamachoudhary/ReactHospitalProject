@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useFormik } from 'formik';
 import {
     AutoComplete,
     Button,
@@ -13,45 +14,7 @@ import {
     Select,
 } from 'antd';
 const { Option } = Select;
-// const residences = [
-//     {
-//         value: 'zhejiang',
-//         label: 'Zhejiang',
-//         children: [
-//             {
-//                 value: 'hangzhou',
-//                 label: 'Hangzhou',
-//                 children: [
-//                     {
-//                         value: 'xihu',
-//                         label: 'West Lake',
-//                     },
-//                 ],
-//             },
-//         ],
-//     },
-//     {
-//         value: 'jiangsu',
-//         label: 'Jiangsu',
-//         children: [
-//             {
-//                 value: 'nanjing',
-//                 label: 'Nanjing',
-//                 children: [
-//                     {
-//                         value: 'zhonghuamen',
-//                         label: 'Zhong Hua Men',
-//                     },
-//                 ],
-//             },
-//         ],
-//     },
-// ];
 const Registerleft = () => {
-    const [form] = Form.useForm();
-    const onFinish = (values) => {
-        console.log('Received values of form: ', values);
-    };
     const prefixSelector = (
         <Form.Item name="prefix" noStyle>
             <Select
@@ -65,15 +28,24 @@ const Registerleft = () => {
         </Form.Item>
     );
     const navigate = useNavigate();
-    const register=()=>{
-      navigate('/Login');
-    }
+    const formik = useFormik({
+        initialValues: {
+          Name: '',
+          Email:'',
+          Password:'',
+          Phone:'',
+        },
+        onSubmit: values => {
+        //   alert(JSON.stringify(values, null, 2));
+        localStorage.setItem('formData',JSON.stringify(values));
+          navigate('/Login');
+        },
+      });
     return (
         <div style={{ height: '', width: '60vw', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             <Form
-                form={form}
                 name="register"
-                onFinish={onFinish}
+                onFinish={formik.handleSubmit}
                 initialValues={{
                     residence: ['zhejiang', 'hangzhou', 'xihu'],
                     prefix: '86',
@@ -85,19 +57,20 @@ const Registerleft = () => {
             >
                 <h1>Login To Your Account</h1>
                 <p style={{ color: '#C4C3C3', fontSize: '14px' }}>Lorem ipsum dolor sit amet consectetur adipisicing elit. Rem aperiam nemo obcaecati sit impedit, eos temporibus dignissimos sed</p>
-                <Form.Item name="Name"
+                <Form.Item
                     label="Name"
+                    name="name"
                     rules={[
                         {
                             required: true,
                             message: 'Please input your Name!',
                         },
                     ]}>
-                    <Input/>
+                    <Input id='Name' name='Name' type='text' onChange={formik.handleChange} value={formik.values.Name}/>
                 </Form.Item>
                 <Form.Item
-                    name="email"
                     label="E-mail"
+                    name='email'
                     rules={[
                         {
                             type: 'email',
@@ -109,7 +82,7 @@ const Registerleft = () => {
                         },
                     ]}
                 >
-                    <Input />
+                    <Input id='Email' name='Email' type='email' onChange={formik.handleChange} value={formik.values.Email} />
                 </Form.Item>
 
                 <Form.Item
@@ -123,45 +96,8 @@ const Registerleft = () => {
                     ]}
                     hasFeedback
                 >
-                    <Input.Password />
+                    <Input.Password id='Password' name='Password' type='password' onChange={formik.handleChange} value={formik.values.Password}/>
                 </Form.Item>
-
-                <Form.Item
-                    name="confirm"
-                    label="Confirm Password"
-                    dependencies={['password']}
-                    hasFeedback
-                    rules={[
-                        {
-                            required: true,
-                            message: 'Please confirm your password!',
-                        },
-                        ({ getFieldValue }) => ({
-                            validator(_, value) {
-                                if (!value || getFieldValue('password') === value) {
-                                    return Promise.resolve();
-                                }
-                                return Promise.reject(new Error('The new password that you entered do not match!'));
-                            },
-                        }),
-                    ]}
-                >
-                    <Input.Password />
-                </Form.Item>
-
-                {/* <Form.Item
-                    name="residence"
-                    label="Habitual Residence"
-                    rules={[
-                        {
-                            type: 'array',
-                            required: true,
-                            message: 'Please select your habitual residence!',
-                        },
-                    ]}
-                >
-                    <Cascader options={residences} />
-                </Form.Item> */}
 
                 <Form.Item
                     name="phone"
@@ -178,11 +114,11 @@ const Registerleft = () => {
                         style={{
                             width: '100%',
                         }}
+                        id='Phone' name='Phone' type='number' onChange={formik.handleChange} value={formik.values.Phone}
                     />
                 </Form.Item>
 
-                <Form.Item
-                    name="gender"
+                {/* <Form.Item
                     label="Gender"
                     rules={[
                         {
@@ -196,7 +132,7 @@ const Registerleft = () => {
                         <Option value="female">Female</Option>
                         <Option value="other">Other</Option>
                     </Select>
-                </Form.Item>
+                </Form.Item> */}
 
                 <Form.Item label='If you have old prescription please upload(optional)'>
                     <Button>Upload</Button>
@@ -218,7 +154,7 @@ const Registerleft = () => {
                     </Checkbox>
                 </Form.Item>
                 <Form.Item>
-                    <Button type="primary" htmlType="submit" onClick={register}>
+                    <Button type="primary" htmlType="submit">
                         Register
                     </Button>
                 </Form.Item>
