@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate,Link} from 'react-router-dom';
 import { useFormik } from 'formik';
 import {
     AutoComplete,
@@ -164,7 +164,8 @@ const Registerleft = () => {
                     <Button style={{ padding: '16px 40px', fontSize: '15px' }}>Google</Button>
                     <Button style={{ marginLeft: '10px', padding: '16px 40px', fontSize: '15px' }}>Facebook</Button>
                 </Form.Item>
-                <p>Already have an account<a style={{ color: '#00B934', marginLeft: '2px' }}>Login</a></p>
+                {/* <p>Already have an account<a style={{ color: '#00B934', marginLeft: '2px' }}>Login</a></p> */}
+                <p>Already have an account<Link to='/Login' style={{ color: '#00B934', marginLeft: '2px' }}>Login</Link></p>
             </Form>
         </div>
 
