@@ -8,6 +8,7 @@ import {
 } from "react-router-dom";
 import Login from './Component/LoginComponent/Login.jsx';
 import Register from './Component/RegisterComponent/Register.jsx';
+import Upload from './Component/Upload/Upload.jsx';
 
 const router=createBrowserRouter([
   {
@@ -21,6 +22,10 @@ const router=createBrowserRouter([
   {
     path:'/Register',
     element:<Register/>
+  },
+  {
+    path:'/Upload',
+    element:<Upload/>
   }
 ])
 

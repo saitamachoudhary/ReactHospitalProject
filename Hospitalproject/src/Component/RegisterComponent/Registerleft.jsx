@@ -240,7 +240,7 @@ const Registerleft = () => {
                 }}
                 scrollToFirstError
             >
-                <h1>Login To Your Account</h1>
+                <h1>Register Your Account</h1>
                 <p style={{ color: '#C4C3C3', fontSize: '14px' }}>
                     Lorem ipsum dolor sit amet consectetur adipisicing elit. Rem aperiam nemo obcaecati sit impedit, eos temporibus dignissimos sed
                 </p>
@@ -307,7 +307,7 @@ const Registerleft = () => {
                 </Form.Item>
 
                 <Form.Item label='If you have old prescription please upload(optional)'>
-                    <Button>Upload</Button>
+                    <Button><Link to='/Upload'>Upload</Link></Button>
                 </Form.Item>
 
                 <Form.Item

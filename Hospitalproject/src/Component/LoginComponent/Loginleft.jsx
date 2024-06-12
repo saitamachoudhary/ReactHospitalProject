@@ -19,10 +19,10 @@ const Loginleft = () =>{
         const item={name:element.Name,em:element.Email,ph:element.Phone};
         localStorage.setItem('loginData',JSON.stringify(item));
         navigate('/');
-        // alert('success');
        }
        else{
-        alert('try again');
+        if(!element.Email===email) alert('Invalid email')
+        else alert('Invalid password')
        }
     });
    }
