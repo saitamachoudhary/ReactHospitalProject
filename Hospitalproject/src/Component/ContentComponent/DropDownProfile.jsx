@@ -3,23 +3,23 @@ import { DownOutlined } from '@ant-design/icons';
 import { Dropdown, Space,Button} from 'antd';
 
 const DropdownProfile = () => {
-    const[Data,setData]=React.useState(JSON.parse(localStorage.getItem("formData")));
+    const[Data,setData]=React.useState(JSON.parse(localStorage.getItem("loginData")));
     const items = [
         {
-          label: <a>{Data.Name}</a>,
+          label: <a>{Data.name}</a>,
           key: '0',
         },
         {
-          label: <a>{Data.Email}</a>,
+          label: <a>{Data.em}</a>,
           key: '1',
         },
         {
-          label: <a>{Data.Phone}</a>,
+          label: <a>{Data.ph}</a>,
           key: '3',
         },
         {
             label:<Button onClick={()=>{
-                localStorage.clear();
+              localStorage.removeItem("loginData");
                 location.reload();
             }} style={{backgroundColor:'green',color:'white'}}>Logout</Button>
         }

@@ -9,17 +9,22 @@ const onFinish = (values) => {
   };
 
 const Loginleft = () =>{
-   const[Data,setData]=React.useState(JSON.parse(localStorage.getItem("formData")));
-   const[email,setemail]=React.useState('abc');
+   const[Data,setData]=React.useState(JSON.parse(localStorage.getItem("formDataArray")));
+   const[email,setemail]=React.useState('');
    const[password,setpassword]=React.useState('');
    const navigate=useNavigate();
    const check=()=>{
-     if(Data.Email===email&&Data.Password===password){
-      navigate('/');
-     }
-     else{
-      alert('try again');
-     }
+    Data.forEach(element => {
+      if(element.Email===email&&element.Password===password){
+        const item={name:element.Name,em:element.Email,ph:element.Phone};
+        localStorage.setItem('loginData',JSON.stringify(item));
+        navigate('/');
+        // alert('success');
+       }
+       else{
+        alert('try again');
+       }
+    });
    }
     return(
       <div style={{ height: '', width: '60vw',display:'flex',alignItems:'center',justifyContent:'center'}}>

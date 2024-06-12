@@ -56,7 +56,7 @@ const Headernav=()=>{
           // theme="dark"
           mode="horizontal"
           // defaultSelectedKeys={['2']}
-          items={(localStorage.getItem("formData"))?DatanavItem:NavItem2}
+          items={(localStorage.getItem("loginData"))?DatanavItem:NavItem2}
           style={{
             flex: 0.7,
             minWidth: 0,
