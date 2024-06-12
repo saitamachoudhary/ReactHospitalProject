@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Button, Checkbox, Form, Input } from 'antd';
+import { Button, Checkbox, Form, Input,message } from 'antd';
 import { useNavigate,Link} from 'react-router-dom';
 const onFinish = (values) => {
     console.log('Success:', values);
@@ -12,18 +12,34 @@ const Loginleft = () =>{
    const[Data,setData]=React.useState(JSON.parse(localStorage.getItem("formDataArray")));
    const[email,setemail]=React.useState('');
    const[password,setpassword]=React.useState('');
+   const [messageApi, contextHolder] = message.useMessage();
    const navigate=useNavigate();
+   const error = () => {
+    messageApi.open({
+      type: 'error',
+      content: 'Invalid Email & Password',
+    });
+  };
+  const success = () => {
+    messageApi.open({
+      type: 'success',
+      content: 'This is a success message',
+    });
+  };
    const check=()=>{
-    Data.forEach(element => {
+    Data.some(element => {
       if(element.Email===email&&element.Password===password){
+        success();
         const item={name:element.Name,em:element.Email,ph:element.Phone};
         localStorage.setItem('loginData',JSON.stringify(item));
-        navigate('/');
+        setTimeout(() => {
+          navigate('/');
+        }, 1000);
+        return true;
        }
-       else{
-        if(!element.Email===email) alert('Invalid email')
-        else alert('Invalid password')
-       }
+      else{
+        error();
+      }
     });
    }
     return(
@@ -80,6 +96,7 @@ const Loginleft = () =>{
 
     <Form.Item
     >
+      {contextHolder}
       <Button type="primary" htmlType="submit" onClick={check}>
         Submit
       </Button>
