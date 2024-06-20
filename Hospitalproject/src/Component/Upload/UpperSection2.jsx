@@ -1,12 +1,13 @@
 import React from "react";
 import { Layout,Menu,Button} from "antd";
 // import DropdownProfile from "./DropDownProfile";
-import {Link} from 'react-router-dom'
+import {Link,useNavigate} from 'react-router-dom'
 // import DropDownDoc from "./DropDownDoc";
 const{Header}=Layout;
 
 
 const UpperSection2=()=>{
+  const navigate=useNavigate();
     const NavItem=[
         {key:1,label:'Home'},
         {key:2,label:'About us'},
@@ -17,7 +18,7 @@ const UpperSection2=()=>{
       const NavItem2=[
         // {key:1,label:<a style={{color:'green'}}>Login</a>},
         {key:2,label:<Button>...</Button>},
-        {key:1,label:<Button type="primary">CheckOut</Button>},
+        {key:1,label:<Button type="primary" onClick={()=>navigate('/Register')}>CheckOut</Button>},
       ]
 
     return(

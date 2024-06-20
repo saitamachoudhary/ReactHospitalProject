@@ -1,5 +1,5 @@
 // import React, { useState } from 'react';
-// import { useNavigate,Link} from 'react-router-dom';
+// import { useNavigate, Link } from 'react-router-dom';
 // import { useFormik } from 'formik';
 // import {
 //     AutoComplete,
@@ -14,7 +14,13 @@
 //     Select,
 // } from 'antd';
 // const { Option } = Select;
+
 // const Registerleft = () => {
+//     const [formDataArray, setFormDataArray] = useState(() => {
+//         const existingData = localStorage.getItem('formDataArray');
+//         return existingData ? JSON.parse(existingData) : [];
+//     });
+
 //     const prefixSelector = (
 //         <Form.Item name="prefix" noStyle>
 //             <Select
@@ -27,20 +33,24 @@
 //             </Select>
 //         </Form.Item>
 //     );
+
 //     const navigate = useNavigate();
+
 //     const formik = useFormik({
 //         initialValues: {
-//           Name: '',
-//           Email:'',
-//           Password:'',
-//           Phone:'',
+//             Name: '',
+//             Email: '',
+//             Password: '',
+//             Phone: '',
 //         },
 //         onSubmit: values => {
-//         //   alert(JSON.stringify(values, null, 2));
-//         localStorage.setItem('formData',JSON.stringify(values));
-//           navigate('/Login');
+//             const updatedFormDataArray = [...formDataArray, values];
+//             localStorage.setItem('formDataArray', JSON.stringify(updatedFormDataArray));
+//             setFormDataArray(updatedFormDataArray);
+//             navigate('/Login');
 //         },
-//       });
+//     });
+
 //     return (
 //         <div style={{ height: '', width: '60vw', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
 //             <Form
@@ -55,8 +65,10 @@
 //                 }}
 //                 scrollToFirstError
 //             >
-//                 <h1>Login To Your Account</h1>
-//                 <p style={{ color: '#C4C3C3', fontSize: '14px' }}>Lorem ipsum dolor sit amet consectetur adipisicing elit. Rem aperiam nemo obcaecati sit impedit, eos temporibus dignissimos sed</p>
+//                 <h1>Register Your Account</h1>
+//                 <p style={{ color: '#C4C3C3', fontSize: '14px' }}>
+//                     Lorem ipsum dolor sit amet consectetur adipisicing elit. Rem aperiam nemo obcaecati sit impedit, eos temporibus dignissimos sed
+//                 </p>
 //                 <Form.Item
 //                     label="Name"
 //                     name="name"
@@ -65,8 +77,9 @@
 //                             required: true,
 //                             message: 'Please input your Name!',
 //                         },
-//                     ]}>
-//                     <Input id='Name' name='Name' type='text' onChange={formik.handleChange} value={formik.values.Name}/>
+//                     ]}
+//                 >
+//                     <Input id='Name' name='Name' type='text' onChange={formik.handleChange} value={formik.values.Name} />
 //                 </Form.Item>
 //                 <Form.Item
 //                     label="E-mail"
@@ -96,7 +109,7 @@
 //                     ]}
 //                     hasFeedback
 //                 >
-//                     <Input.Password id='Password' name='Password' type='password' onChange={formik.handleChange} value={formik.values.Password}/>
+//                     <Input.Password id='Password' name='Password' type='password' onChange={formik.handleChange} value={formik.values.Password} />
 //                 </Form.Item>
 
 //                 <Form.Item
@@ -118,24 +131,8 @@
 //                     />
 //                 </Form.Item>
 
-//                 {/* <Form.Item
-//                     label="Gender"
-//                     rules={[
-//                         {
-//                             required: true,
-//                             message: 'Please select gender!',
-//                         },
-//                     ]}
-//                 >
-//                     <Select placeholder="select your gender">
-//                         <Option value="male">Male</Option>
-//                         <Option value="female">Female</Option>
-//                         <Option value="other">Other</Option>
-//                     </Select>
-//                 </Form.Item> */}
-
 //                 <Form.Item label='If you have old prescription please upload(optional)'>
-//                     <Button>Upload</Button>
+//                     <Button><Link to='/Upload'>Upload</Link></Button>
 //                 </Form.Item>
 
 //                 <Form.Item
@@ -147,7 +144,6 @@
 //                                 value ? Promise.resolve() : Promise.reject(new Error('Should accept agreement')),
 //                         },
 //                     ]}
-//                     // {...tailFormItemLayout}
 //                 >
 //                     <Checkbox>
 //                         I have read the <a href="">agreement</a>
@@ -164,16 +160,15 @@
 //                     <Button style={{ padding: '16px 40px', fontSize: '15px' }}>Google</Button>
 //                     <Button style={{ marginLeft: '10px', padding: '16px 40px', fontSize: '15px' }}>Facebook</Button>
 //                 </Form.Item>
-//                 {/* <p>Already have an account<a style={{ color: '#00B934', marginLeft: '2px' }}>Login</a></p> */}
 //                 <p>Already have an account<Link to='/Login' style={{ color: '#00B934', marginLeft: '2px' }}>Login</Link></p>
 //             </Form>
 //         </div>
-
 //     );
 // };
+
 // export default Registerleft;
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useFormik } from 'formik';
 import {
@@ -225,6 +220,18 @@ const Registerleft = () => {
             navigate('/Login');
         },
     });
+
+    useEffect(() => {
+        const savedFormData = localStorage.getItem('formData');
+        if (savedFormData) {
+            formik.setValues(JSON.parse(savedFormData));
+        }
+    }, []);
+
+    const handleUploadClick = () => {
+        localStorage.setItem('formData', JSON.stringify(formik.values));
+        navigate('/Upload');
+    };
 
     return (
         <div style={{ height: '', width: '60vw', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -307,7 +314,7 @@ const Registerleft = () => {
                 </Form.Item>
 
                 <Form.Item label='If you have old prescription please upload(optional)'>
-                    <Button><Link to='/Upload'>Upload</Link></Button>
+                    <Button onClick={handleUploadClick}>Upload</Button>
                 </Form.Item>
 
                 <Form.Item
