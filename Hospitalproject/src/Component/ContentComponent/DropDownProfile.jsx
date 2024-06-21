@@ -1,6 +1,7 @@
 import React from 'react';
 import { DownOutlined } from '@ant-design/icons';
 import { Dropdown, Space,Button} from 'antd';
+import PrescriptionModel from './PrescriptionModel';
 
 const DropdownProfile = () => {
     const[Data,setData]=React.useState(JSON.parse(localStorage.getItem("loginData")));
@@ -16,6 +17,9 @@ const DropdownProfile = () => {
         {
           label: <a>{Data.ph}</a>,
           key: '3',
+        },
+        {
+          label:<PrescriptionModel/>
         },
         {
             label:<Button onClick={()=>{
