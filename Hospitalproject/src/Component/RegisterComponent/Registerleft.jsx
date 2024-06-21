@@ -176,7 +176,7 @@ import {
     Button,
     Checkbox,
     Form,
-    Select,
+    Result
 } from 'antd';
 
 const Registerleft = () => {
@@ -193,6 +193,7 @@ const Registerleft = () => {
             Email: '',
             Password: '',
             Phone: '',
+            Prescription:null,
         },
         validationSchema: Yup.object({
             Name: Yup.string()
@@ -214,14 +215,23 @@ const Registerleft = () => {
             localStorage.setItem('formDataArray', JSON.stringify(updatedFormDataArray));
             setFormDataArray(updatedFormDataArray);
             localStorage.removeItem('formData');
+            localStorage.removeItem('ImageDataArray');
             navigate('/Login');
         },
     });
 
     useEffect(() => {
         const savedFormData = localStorage.getItem('formData');
+        const prescriptionData=JSON.parse(localStorage.getItem('ImageDataArray'));
         if (savedFormData) {
-            formik.setValues(JSON.parse(savedFormData));
+            const parsedFormdata=JSON.parse(savedFormData);
+            formik.setValues({
+                ...parsedFormdata,
+                Prescription:prescriptionData||''
+            })
+        }
+        else if(prescriptionData){
+            formik.setFieldValue('PrescriptionData', prescriptionData);
         }
 
     }, []);
@@ -307,7 +317,7 @@ const Registerleft = () => {
                 ) : null}
             </div>
                     <Form.Item label='If you have old prescription please upload(optional)'>
-                    <Button onClick={handleUploadClick}>Upload</Button>
+                    {formik.values.Prescription?<Result status="success"/>:<Button onClick={handleUploadClick}>Upload</Button>}
                 </Form.Item>
 
                 <Form.Item
