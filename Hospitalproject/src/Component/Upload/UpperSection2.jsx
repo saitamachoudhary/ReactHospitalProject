@@ -1,7 +1,6 @@
-import React from "react";
 import { Layout,Menu,Button} from "antd";
 // import DropdownProfile from "./DropDownProfile";
-import {Link,useNavigate} from 'react-router-dom'
+import {useNavigate} from 'react-router-dom'
 // import DropDownDoc from "./DropDownDoc";
 const{Header}=Layout;
 

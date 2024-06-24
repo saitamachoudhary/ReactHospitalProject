@@ -1,31 +1,22 @@
-import React, { useState } from "react";
-
+import {useDispatch,useSelector} from 'react-redux';
+import { registerPrescription,handleDelete} from "../../Store/RegisterSlice";
+import { nanoid } from '@reduxjs/toolkit';
 function UploadFile() {
-	const [file, setFile] = useState(()=>{
-        const existingData=localStorage.getItem('ImageDataArray');
-        return existingData?JSON.parse(existingData):[];
-    });
-
+  const file=useSelector(state=>state.registerReducer.Prescription);
+  const dispatch=useDispatch();
 	function handleChange(e) {
-        const updatedImageData=[...file,URL.createObjectURL(e.target.files[0])];
-        localStorage.setItem('ImageDataArray',JSON.stringify(updatedImageData));
-		setFile(updatedImageData);
+        const fileObj=e.target.files[0];
+        dispatch(registerPrescription({url:URL.createObjectURL(fileObj),file:fileObj.name,id:nanoid()}))
 	}
-
-    function HandleDelete(index){
-        const updateFile=file.filter((val,index2)=>index!==index2);
-        localStorage.setItem('ImageDataArray',JSON.stringify(updateFile));
-        setFile(updateFile);
-    }
-
 	return (
 		<div className="App">
 			<input type="file" onChange={handleChange} />
 			{file.map((val,index)=>{
                 return(
-                    <div>
-                        <img src={val} />
-                        <button onClick={()=>HandleDelete(index)}>Delete</button>
+                    <div key={index}>
+                        <img src={val.url} />
+                        {/* <button onClick={dispatch(handleDelete(val.id))}>Delete</button> */}
+                        <button onClick={()=>dispatch(handleDelete(val.id))}>Delete</button>
                     </div>
                 )
             })}
