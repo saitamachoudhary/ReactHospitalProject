@@ -28,10 +28,10 @@ const Loginleft = () => {
     const user = Data.find(element => element.Email === email && element.Password === password);
     if (user) {
       success();
-      const item = { name: user.Name, em: user.Email, ph: user.Phone };
+      const item = {id:user.id, name: user.Name, em: user.Email, ph: user.Phone,prescription:user.Prescription};
       localStorage.setItem('loginData', JSON.stringify(item));
       setTimeout(() => {
-        navigate('/',{state:item});
+        navigate('/');
       }, 1000);
       return true;
     } else {

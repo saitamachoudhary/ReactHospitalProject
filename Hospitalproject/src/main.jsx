@@ -12,6 +12,7 @@ import Upload from './Component/Upload/Upload.jsx';
 import Problems from './Component/Problems/Problem.jsx';
 import Store from './Store/Store.js';
 import {Provider} from 'react-redux';
+import Edit from './Component/Edit/EditPage.jsx';
 const router=createBrowserRouter([
   {
     path:'/',
@@ -32,6 +33,10 @@ const router=createBrowserRouter([
   {
     path:'/PatientProblems',
     element:<Problems/>
+  },
+  {
+    path:'/Edit',
+    element:<Edit/>
   }
 ])
 ReactDOM.createRoot(document.getElementById('root')).render(

@@ -1,13 +1,15 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, Link} from 'react-router-dom';
-import { useSelector } from 'react-redux';
+import { useSelector,useDispatch} from 'react-redux';
+import { handleDelete } from '../../Store/RegisterSlice';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
+import { nanoid } from '@reduxjs/toolkit';
+import {DeleteOutlined} from '@ant-design/icons'
 import {
     Button,
     Checkbox,
     Form,
-    Result
 } from 'antd';
 
 const Registerleft = () => {
@@ -15,12 +17,13 @@ const Registerleft = () => {
         const existingData = localStorage.getItem('formDataArray');
         return existingData ? JSON.parse(existingData) : [];
     });
-
+    const dispatch=useDispatch();
     const navigate = useNavigate();
     const prescriptionData = useSelector(state=>state.registerReducer.Prescription);
 
     const formik = useFormik({
         initialValues: {
+            id:nanoid(),
             Name: '',
             Email: '',
             Password: '',
@@ -61,11 +64,7 @@ const Registerleft = () => {
                 Prescription: prescriptionData || ''
             })
         }
-        else if (prescriptionData) {
-            formik.setFieldValue('PrescriptionData', prescriptionData);
-        }
-
-    }, []);
+    }, [prescriptionData]);
 
     const handleUploadClick = () => {
         localStorage.setItem('formData', JSON.stringify(formik.values));
@@ -148,9 +147,15 @@ const Registerleft = () => {
                         ) : null}
                     </div>
                     <Form.Item label='If you have old prescription please upload(optional)'>
-                        {formik.values.Prescription ? <Result status="success" /> : <Button onClick={handleUploadClick}>Upload</Button>}
-                        {formik.values.Prescription&&formik.values.Prescription.map((val,index)=>{
-                            return <p key={index}>{val.file}</p>
+                        {/* {formik.values.Prescription ? '' : <Button onClick={handleUploadClick}>Upload</Button>} */}
+                        <Button style={prescriptionData.length===0?{display:"initial"}:{display:'none'}} onClick={handleUploadClick}>Upload</Button>
+                        {formik.values.Prescription&&prescriptionData.map((val,index)=>{
+                            return (
+                                <div key={index} style={{display:'flex',alignItems:'center'}}>
+                                <p>{val.file}</p>
+                                <DeleteOutlined style={{marginLeft:'10px'}} onClick={()=>dispatch(handleDelete(val.id))} />
+                            </div>
+                            )
                         })}
                     </Form.Item>
 
