@@ -1,6 +1,5 @@
 import { useDispatch, useSelector } from 'react-redux';
 import { useLocation,useNavigate} from 'react-router-dom';
-import { registerPrescription,} from "../../Store/RegisterSlice";
 import { nanoid } from '@reduxjs/toolkit';
 import { registerUserInput } from '../../Store/UserInputSlice';
 import { Button } from 'antd';
@@ -16,7 +15,6 @@ function UploadFile() {
   function handleChange(e) {
     const fileObj = e.target.files[0];
     const fileDetails = { url: URL.createObjectURL(fileObj), file: fileObj.name, id: nanoid() };
-    dispatch(registerPrescription(fileDetails));
     dispatch(registerUserInput({
       ...fileData,
       Prescription: [...(fileData.Prescription || []), fileDetails]

@@ -2,33 +2,48 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { Button, Form } from 'antd';
-import { useEffect} from 'react';
+import { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { registerPrescription } from '../../Store/RegisterSlice';
-import { registerUserInput, handleDeletePrescription } from '../../Store/UserInputSlice';
+import { registerUserInput, handleDeletePrescription,handleEmptyuser} from '../../Store/UserInputSlice';
 import { StepBackwardOutlined, DeleteOutlined } from '@ant-design/icons';
 
 const Edit = () => {
+    const [stateList, setStateList] = useState([]);
+    const [cityList, setCityList] = useState([]);
     const navigate = useNavigate();
     const location = useLocation();
     const dispatch = useDispatch();
     const user = location.state;
 
+    const config = {
+        cUrl: 'https://api.countrystatecity.in/v1/countries',
+        ckey: 'NHhvOEcyWk50N2Vna3VFTE00bFp3MjFKR0ZEOUhkZlg4RTk1MlJlaA=='
+    };
+
     useEffect(() => {
-            const existingData = localStorage.getItem('formDataArray');
-            if (existingData) {
-                const dataArray = JSON.parse(existingData);
-                const userData = dataArray.find((val) => val.id === user);
-                if (userData) {
-                    userData.Prescription.forEach((val) => {
-                        dispatch(registerPrescription(val));
-                    });
-                    dispatch(registerUserInput(userData));
-                }
+        const fetchStates = async () => {
+            try {
+                let apiEndPoint = config.cUrl;
+                let res = await fetch(`${apiEndPoint}/IN/states`, { headers: { "X-CSCAPI-KEY": config.ckey } });
+                let res2 = await res.json();
+                setStateList(res2);
+            } catch (error) {
+                console.error('Error fetching states:', error);
             }
-    }, [user,dispatch]);
+        };
+        fetchStates();
+    }, []);
 
-
+    useEffect(() => {
+        const existingData = localStorage.getItem('formDataArray');
+        if (existingData) {
+            const dataArray = JSON.parse(existingData);
+            const userData = dataArray.find((val) => val.id === user);
+            if (userData) {
+                dispatch(registerUserInput(userData));
+            }
+        }
+    }, [user, dispatch]);
 
     const userEditData = useSelector(state => state.userinputReducer.user);
     useEffect(() => {
@@ -40,18 +55,22 @@ const Edit = () => {
                 Password: userEditData.Password || '',
                 Phone: userEditData.Phone || '',
                 Prescription: userEditData.Prescription || [],
+                City: userEditData.City || '',
+                State: userEditData.State || '',
             });
         }
     }, [userEditData]);
 
     const formik = useFormik({
         initialValues: {
-            id: userEditData.id || '',
-            Name: userEditData.Name || '',
-            Email: userEditData.Email || '',
-            Password: userEditData.Password || '',
-            Phone: userEditData.Phone || '',
-            Prescription: userEditData.Prescription || [],
+            id: '',
+            Name: '',
+            Email: '',
+            Password: '',
+            Phone: '',
+            Prescription: [],
+            City: '',
+            State: '',
         },
         enableReinitialize: true,
         validationSchema: Yup.object({
@@ -68,6 +87,8 @@ const Edit = () => {
                 .required('Phone number is required')
                 .matches(/^[0-9]+$/, 'Phone number must be numeric')
                 .min(10, 'Phone number must be at least 10 digits'),
+            City: Yup.string().required('City is required'),
+            State: Yup.string().required('State is required'),
         }),
         onSubmit: values => {
             const existingData = localStorage.getItem('formDataArray');
@@ -76,20 +97,38 @@ const Edit = () => {
             if (userIndex !== -1) {
                 formDataArray[userIndex] = values;
                 localStorage.setItem('formDataArray', JSON.stringify(formDataArray));
-                localStorage.setItem('loginData',JSON.stringify({id:values.id,em:values.Email,name:values.Name,ph:values.Phone,prescription:values.Prescription}))
-                if(userEditData.Email!==formik.values.Email||userEditData.Password!==formik.values.Password){
+                localStorage.setItem('loginData', JSON.stringify({ id: values.id, em: values.Email, name: values.Name, ph: values.Phone, prescription: values.Prescription }));
+                if (userEditData.Email !== formik.values.Email || userEditData.Password !== formik.values.Password) {
                     localStorage.removeItem('loginData');
                     navigate('/Login');
+                } else {
+                    navigate('/');
+                    dispatch(handleEmptyuser())
                 }
-                else{
-                   navigate('/');
-                }
-                
             } else {
                 alert('Failed to update the data');
             }
         },
     });
+
+    useEffect(() => {
+        if (formik.values.State) {
+            const selectedState = stateList.find(s => s.name === formik.values.State);
+            if (selectedState) {
+                const fetchCities = async () => {
+                    try {
+                        let apiEndPoint = config.cUrl;
+                        let res = await fetch(`${apiEndPoint}/IN/states/${selectedState.iso2}/cities`, { headers: { "X-CSCAPI-KEY": config.ckey } });
+                        let res2 = await res.json();
+                        setCityList(res2);
+                    } catch (error) {
+                        console.error('Error fetching cities:', error);
+                    }
+                };
+                fetchCities();
+            }
+        }
+    }, [formik.values.State, stateList]);
 
     const handleDeleteClick = (id) => {
         dispatch(handleDeletePrescription(id));
@@ -159,7 +198,7 @@ const Edit = () => {
                     <div style={{ marginBottom: '15px' }}>
                         <label htmlFor="Phone" style={{ display: 'block', marginBottom: '5px' }}>Phone:</label>
                         <input
-                            type="number"
+                            type="text"
                             name="Phone"
                             id="Phone"
                             onChange={formik.handleChange}
@@ -169,6 +208,64 @@ const Edit = () => {
                         />
                         {formik.touched.Phone && formik.errors.Phone ? (
                             <div style={{ color: 'red', marginTop: '5px' }}>{formik.errors.Phone}</div>
+                        ) : null}
+                    </div>
+                    <div style={{ marginBottom: '15px' }}>
+                        <label htmlFor="City" style={{ display: 'block', marginBottom: '5px' }}>City:</label>
+                        <select
+                            name="City"
+                            id="City"
+                            onChange={formik.handleChange}
+                            onBlur={formik.handleBlur}
+                            value={formik.values.City}
+                            style={{ width: '100%', padding: '8px', boxSizing: 'border-box' }}
+                        >
+                            <option value="">Select City</option>
+                            {cityList.map((city, index) => (
+                                <option key={index} value={city.name}>{city.name}</option>
+                            ))}
+                        </select>
+                        {formik.touched.City && formik.errors.City ? (
+                            <div style={{ color: 'red', marginTop: '5px' }}>{formik.errors.City}</div>
+                        ) : null}
+                    </div>
+                    <div style={{ marginBottom: '15px' }}>
+                        <label htmlFor="State" style={{ display: 'block', marginBottom: '5px' }}>State:</label>
+                        <select
+                            name="State"
+                            id="State"
+                            onChange={(e) => {
+                                formik.handleChange(e);
+                                const selectedState = stateList.find(s => s.name === e.target.value);
+                                setCityList([]); // Clear city list when state changes
+                                if (selectedState) {
+                                    setCityList([]);
+                                    const fetchCities = async () => {
+                                        try {
+                                            let apiEndPoint = config.cUrl;
+                                            let res = await fetch(`${apiEndPoint}/IN/states/${selectedState.iso2}/cities`, { headers: { "X-CSCAPI-KEY": config.ckey } });
+                                            let res2 = await res.json();
+                                            setCityList(res2);
+                                        } catch (error) {
+                                            console.error('Error fetching cities:', error);
+                                        }
+                                    };
+                                    fetchCities();
+                                }
+                            }}
+                            onBlur={formik.handleBlur}
+                            value={formik.values.State}
+                            style={{ width: '100%', padding: '8px', boxSizing: 'border-box' }}
+                        >
+                            <option value="">Select State</option>
+                            {stateList.map((state, index) => (
+                                <option key={index} value={state.name}>
+                                    {state.name}
+                                </option>
+                            ))}
+                        </select>
+                        {formik.touched.State && formik.errors.State ? (
+                            <div style={{ color: 'red', marginTop: '5px' }}>{formik.errors.State}</div>
                         ) : null}
                     </div>
                     <Form.Item label="If you have an old prescription, please upload (optional)">

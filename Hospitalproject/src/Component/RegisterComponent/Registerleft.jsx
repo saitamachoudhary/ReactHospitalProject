@@ -1,7 +1,7 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
-import { registerUserInput, handleDeletePrescription,handleEmptyuser} from '../../Store/UserInputSlice';
+import { registerUserInput, handleDeletePrescription, handleEmptyuser } from '../../Store/UserInputSlice';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { nanoid } from '@reduxjs/toolkit';
@@ -9,6 +9,24 @@ import { DeleteOutlined } from '@ant-design/icons';
 import { Button, Form } from 'antd';
 
 const Registerleft = () => {
+    const [state, setstate] = useState([]);
+    const [city, setcity] = useState([]);
+    const [abc, setabc] = useState({});
+    let config = {
+        cUrl: 'https://api.countrystatecity.in/v1/countries',
+        ckey: 'NHhvOEcyWk50N2Vna3VFTE00bFp3MjFKR0ZEOUhkZlg4RTk1MlJlaA=='
+    }
+
+    useEffect(() => {
+        const fetchDatastate = async () => {
+            let apiEndPoint = config.cUrl;
+            let res = await fetch(`${apiEndPoint}/IN/states`, { headers: { "X-CSCAPI-KEY": config.ckey } });
+            let res2 = await res.json();
+            setstate(res2);
+        }
+        fetchDatastate();
+    }, []);
+
     const [formDataArray, setFormDataArray] = useState(() => {
         const existingData = localStorage.getItem('formDataArray');
         return existingData ? JSON.parse(existingData) : [];
@@ -26,6 +44,8 @@ const Registerleft = () => {
             Password: userInputData.Password || '',
             Phone: userInputData.Phone || '',
             Prescription: userInputData.Prescription || [],
+            City: userInputData.City || '',
+            State: userInputData.State || '',
         },
         validationSchema: Yup.object({
             Name: Yup.string()
@@ -41,6 +61,8 @@ const Registerleft = () => {
                 .required('Phone number is required')
                 .matches(/^[0-9]+$/, 'Phone number must be numeric')
                 .min(10, 'Phone number must be at least 10 digits'),
+            City: Yup.string().required('City is required'),
+            State: Yup.string().required('State is required'),
         }),
         onSubmit: values => {
             const updatedFormDataArray = [...formDataArray, values];
@@ -51,6 +73,16 @@ const Registerleft = () => {
             navigate('/Login');
         },
     });
+
+    useEffect(() => {
+        const fetchDatacity = async () => {
+            let apiEndPoint = config.cUrl;
+            let res = await fetch(`${apiEndPoint}/IN/states/${abc.code}/cities`, { headers: { "X-CSCAPI-KEY": config.ckey } });
+            let res2 = await res.json();
+            setcity(res2);
+        }
+        fetchDatacity();
+    }, [abc]);
 
     const handleUploadClick = () => {
         dispatch(registerUserInput(formik.values));
@@ -138,9 +170,56 @@ const Registerleft = () => {
                             <div style={{ color: 'red', marginTop: '5px' }}>{formik.errors.Phone}</div>
                         ) : null}
                     </div>
-                    <Form.Item label='If you have old prescription please upload (optional)'>
+                    <div style={{ marginBottom: '15px' }}>
+                        <label htmlFor="City" style={{ display: 'block', marginBottom: '5px' }}>City:</label>
+                        <select
+                            name="City"
+                            id="City"
+                            onChange={formik.handleChange}
+                            onBlur={formik.handleBlur}
+                            value={formik.values.City}
+                            style={{ width: '100%', padding: '8px', boxSizing: 'border-box' }}
+                        >
+                            <option value="">Select City</option>
+                          {Array.isArray(city)&&city.map((cty,index)=>{
+                            return <option key={index} value={cty.name}>{cty.name}</option>
+                          })}
+                        </select>
+                        {formik.touched.City && formik.errors.City ? (
+                            <div style={{ color: 'red', marginTop: '5px' }}>{formik.errors.City}</div>
+                        ) : null}
+                    </div>
+                    <div style={{ marginBottom: '15px' }}>
+                        <label htmlFor="State" style={{ display: 'block', marginBottom: '5px' }}>State:</label>
+                        <select
+                            name="State"
+                            id="State"
+                            onChange={(e) => {
+                                formik.handleChange(e);
+                                const selectedState = state.find(s => s.name === e.target.value);
+                                setabc({ code: selectedState ? selectedState.iso2 : '' });
+                            }}
+                            onBlur={formik.handleBlur}
+                            value={formik.values.State}
+                            style={{ width: '100%', padding: '8px', boxSizing: 'border-box' }}
+                        >
+                            <option value="">Select State</option>
+                            {state.map((state, index) => (
+                                <option key={index} value={state.name}>
+                                    {state.name}
+                                </option>
+                            ))}
+                        </select>
+
+                        {formik.touched.State && formik.errors.State ? (
+                            <div style={{ color: 'red', marginTop: '5px' }}>{formik.errors.State}</div>
+                        ) : null}
+                    </div>
+                    
                         {formik.values.Prescription.length === 0 ? (
+                            <Form.Item label='If you have old prescription please upload (optional)'>
                             <Button onClick={handleUploadClick}>Upload</Button>
+                            </Form.Item>
                         ) : (
                             formik.values.Prescription.map((val, index) => (
                                 <div key={index} style={{ display: 'flex', alignItems: 'center' }}>
@@ -149,16 +228,16 @@ const Registerleft = () => {
                                 </div>
                             ))
                         )}
-                    </Form.Item>
+                    
                     <Form.Item>
                         <Button
                             type="primary"
                             htmlType="submit"
                             style={
                                 formik.values.Email &&
-                                formik.values.Name &&
-                                formik.values.Password &&
-                                formik.values.Phone&&formik.values.Prescription!==null
+                                    formik.values.Name &&
+                                    formik.values.Password &&
+                                    formik.values.Phone && formik.values.Prescription !== null
                                     ? {}
                                     : { background: 'gray' }
                             }
