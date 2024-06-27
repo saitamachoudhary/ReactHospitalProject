@@ -1,34 +1,31 @@
-import { useState, useEffect } from 'react';
-import { useNavigate, Link} from 'react-router-dom';
-import { useSelector,useDispatch} from 'react-redux';
-import { handleDelete } from '../../Store/RegisterSlice';
+import { useState } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
+import { useSelector, useDispatch } from 'react-redux';
+import { registerUserInput, handleDeletePrescription,handleEmptyuser} from '../../Store/UserInputSlice';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { nanoid } from '@reduxjs/toolkit';
-import {DeleteOutlined} from '@ant-design/icons'
-import {
-    Button,
-    Checkbox,
-    Form,
-} from 'antd';
+import { DeleteOutlined } from '@ant-design/icons';
+import { Button, Form } from 'antd';
 
 const Registerleft = () => {
     const [formDataArray, setFormDataArray] = useState(() => {
         const existingData = localStorage.getItem('formDataArray');
         return existingData ? JSON.parse(existingData) : [];
     });
-    const dispatch=useDispatch();
+
+    const dispatch = useDispatch();
     const navigate = useNavigate();
-    const prescriptionData = useSelector(state=>state.registerReducer.Prescription);
+    const userInputData = useSelector(state => state.userinputReducer.user);
 
     const formik = useFormik({
         initialValues: {
-            id:nanoid(),
-            Name: '',
-            Email: '',
-            Password: '',
-            Phone: '',
-            Prescription: null,
+            id: nanoid(),
+            Name: userInputData.Name || '',
+            Email: userInputData.Email || '',
+            Password: userInputData.Password || '',
+            Phone: userInputData.Phone || '',
+            Prescription: userInputData.Prescription || [],
         },
         validationSchema: Yup.object({
             Name: Yup.string()
@@ -49,30 +46,25 @@ const Registerleft = () => {
             const updatedFormDataArray = [...formDataArray, values];
             localStorage.setItem('formDataArray', JSON.stringify(updatedFormDataArray));
             setFormDataArray(updatedFormDataArray);
-
             localStorage.removeItem('formData');
+            dispatch(handleEmptyuser());
             navigate('/Login');
         },
     });
 
-    useEffect(() => {
-        const savedFormData = localStorage.getItem('formData');
-        if (savedFormData) {
-            const parsedFormdata = JSON.parse(savedFormData);
-            formik.setValues({
-                ...parsedFormdata,
-                Prescription: prescriptionData || ''
-            })
-        }
-    }, [prescriptionData]);
-
     const handleUploadClick = () => {
-        localStorage.setItem('formData', JSON.stringify(formik.values));
+        dispatch(registerUserInput(formik.values));
         navigate('/Upload');
     };
 
+    const handleDeleteClick = (id) => {
+        dispatch(handleDeletePrescription(id));
+        const updatedPrescription = formik.values.Prescription.filter(item => item.id !== id);
+        formik.setFieldValue('Prescription', updatedPrescription);
+    };
+
     return (
-        <div style={{ height: '', width: '60vw', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <div style={{ width: '60vw', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             <Form
                 name="register"
                 onFinish={formik.handleSubmit}
@@ -134,7 +126,7 @@ const Registerleft = () => {
                     <div style={{ marginBottom: '15px' }}>
                         <label htmlFor="Phone" style={{ display: 'block', marginBottom: '5px' }}>Phone:</label>
                         <input
-                            type="number"
+                            type="text"
                             name="Phone"
                             id="Phone"
                             onChange={formik.handleChange}
@@ -146,35 +138,31 @@ const Registerleft = () => {
                             <div style={{ color: 'red', marginTop: '5px' }}>{formik.errors.Phone}</div>
                         ) : null}
                     </div>
-                    <Form.Item label='If you have old prescription please upload(optional)'>
-                        {/* {formik.values.Prescription ? '' : <Button onClick={handleUploadClick}>Upload</Button>} */}
-                        <Button style={prescriptionData.length===0?{display:"initial"}:{display:'none'}} onClick={handleUploadClick}>Upload</Button>
-                        {formik.values.Prescription&&prescriptionData.map((val,index)=>{
-                            return (
-                                <div key={index} style={{display:'flex',alignItems:'center'}}>
-                                <p>{val.file}</p>
-                                <DeleteOutlined style={{marginLeft:'10px'}} onClick={()=>dispatch(handleDelete(val.id))} />
-                            </div>
-                            )
-                        })}
-                    </Form.Item>
-
-                    <Form.Item
-                        name="agreement"
-                        valuePropName="checked"
-                        rules={[
-                            {
-                                validator: (_, value) =>
-                                    value ? Promise.resolve() : Promise.reject(new Error('Should accept agreement')),
-                            },
-                        ]}
-                    >
-                        <Checkbox>
-                            I have read the <a href="">agreement</a>
-                        </Checkbox>
+                    <Form.Item label='If you have old prescription please upload (optional)'>
+                        {formik.values.Prescription.length === 0 ? (
+                            <Button onClick={handleUploadClick}>Upload</Button>
+                        ) : (
+                            formik.values.Prescription.map((val, index) => (
+                                <div key={index} style={{ display: 'flex', alignItems: 'center' }}>
+                                    <p>{val.file}</p>
+                                    <DeleteOutlined style={{ marginLeft: '10px' }} onClick={() => handleDeleteClick(val.id)} />
+                                </div>
+                            ))
+                        )}
                     </Form.Item>
                     <Form.Item>
-                        <Button type="primary" htmlType="submit">
+                        <Button
+                            type="primary"
+                            htmlType="submit"
+                            style={
+                                formik.values.Email &&
+                                formik.values.Name &&
+                                formik.values.Password &&
+                                formik.values.Phone&&formik.values.Prescription!==null
+                                    ? {}
+                                    : { background: 'gray' }
+                            }
+                        >
                             Register
                         </Button>
                     </Form.Item>
