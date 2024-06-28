@@ -44,7 +44,7 @@ function UploadFile() {
         <Button onClick={() => dispatch(handleDeletePrescription(val.id))}>Delete</Button>
       </Card>
       ))}
-      <Button type='primary' style={(location.state.boolean2)?{display:'initial',marginTop:'10px'}:{display:'none'}}  onClick={()=>navigate('/Edit',{state:{id:location.state.id,boolean:false,boolean2:true}})}>Edit</Button>
+      <Button type='primary' style={(location.state!==null&&location.state.boolean2)?{display:'initial',marginTop:'10px'}:{display:'none'}}  onClick={()=>navigate('/Edit',{state:{id:location.state.id,boolean:false,boolean2:true}})}>Edit</Button>
     </div>
   );
 }
