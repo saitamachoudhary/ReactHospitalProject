@@ -40,26 +40,7 @@ const Edit = () => {
         });
       }, []);
 
-    //   useEffect(() => {
-    //     fetch('https://countriesnow.space/api/v0.1/countries/cities', {
-    //       method: 'POST', 
-    //       headers: {
-    //         'Content-Type': 'application/json',
-    //       },
-    //       body: JSON.stringify({
-    //         country: 'India' 
-    //       }),
-    //     })
-    //     .then(response => response.json())
-    //     .then(data => {
-    //         setCityList(data.data)
-    //     })
-    //     .catch(error => {
-    //       alert(error)
-    //     });
-    //   }, []);
-
-
+ 
     const userEditData = useSelector(state => state.userinputReducer.user);
     const formik = useFormik({
         initialValues: {
