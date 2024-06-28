@@ -40,24 +40,24 @@ const Edit = () => {
         });
       }, []);
 
-      useEffect(() => {
-        fetch('https://countriesnow.space/api/v0.1/countries/cities', {
-          method: 'POST', 
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            country: 'India' 
-          }),
-        })
-        .then(response => response.json())
-        .then(data => {
-            setCityList(data.data)
-        })
-        .catch(error => {
-          alert(error)
-        });
-      }, []);
+    //   useEffect(() => {
+    //     fetch('https://countriesnow.space/api/v0.1/countries/cities', {
+    //       method: 'POST', 
+    //       headers: {
+    //         'Content-Type': 'application/json',
+    //       },
+    //       body: JSON.stringify({
+    //         country: 'India' 
+    //       }),
+    //     })
+    //     .then(response => response.json())
+    //     .then(data => {
+    //         setCityList(data.data)
+    //     })
+    //     .catch(error => {
+    //       alert(error)
+    //     });
+    //   }, []);
 
 
     const userEditData = useSelector(state => state.userinputReducer.user);
@@ -111,6 +111,25 @@ const Edit = () => {
         },
     });
 
+    useEffect(() => {
+        fetch('https://countriesnow.space/api/v0.1/countries/state/cities', {
+          method: 'POST', 
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            country: 'India',
+            state: formik.values.State
+          }),
+        })
+        .then(response => response.json())
+        .then(data => {
+            setCityList(data.data)
+        })
+        .catch(error => {
+          alert(error)
+        });
+      }, [formik.values.State]);
 
     const handleDeleteClick = (id) => {
         dispatch(handleDeletePrescription(id));
@@ -198,25 +217,6 @@ const Edit = () => {
                         ) : null}
                     </div>
                     <div style={{ marginBottom: '15px' }}>
-                        <label htmlFor="City" style={{ display: 'block', marginBottom: '5px' }}>City:</label>
-                        <select
-                            name="City"
-                            id="City"
-                            onChange={formik.handleChange}
-                            onBlur={formik.handleBlur}
-                            value={formik.values.City}
-                            style={{ width: '100%', padding: '8px', boxSizing: 'border-box' }}
-                        >
-                            <option value="">Select City</option>
-                            {cityList.map((city, index) => (
-                                <option key={index} value={city}>{city}</option>
-                            ))}
-                        </select>
-                        {formik.touched.City && formik.errors.City ? (
-                            <div style={{ color: 'red', marginTop: '5px' }}>{formik.errors.City}</div>
-                        ) : null}
-                    </div>
-                    <div style={{ marginBottom: '15px' }}>
                         <label htmlFor="State" style={{ display: 'block', marginBottom: '5px' }}>State:</label>
                         <select
                             name="State"
@@ -237,6 +237,26 @@ const Edit = () => {
                             <div style={{ color: 'red', marginTop: '5px' }}>{formik.errors.State}</div>
                         ) : null}
                     </div>
+                    <div style={{ marginBottom: '15px' }}>
+                        <label htmlFor="City" style={{ display: 'block', marginBottom: '5px' }}>City:</label>
+                        <select
+                            name="City"
+                            id="City"
+                            onChange={formik.handleChange}
+                            onBlur={formik.handleBlur}
+                            value={formik.values.City}
+                            style={{ width: '100%', padding: '8px', boxSizing: 'border-box' }}
+                        >
+                            <option value="">Select City</option>
+                            {cityList.map((city, index) => (
+                                <option key={index} value={city}>{city}</option>
+                            ))}
+                        </select>
+                        {formik.touched.City && formik.errors.City ? (
+                            <div style={{ color: 'red', marginTop: '5px' }}>{formik.errors.City}</div>
+                        ) : null}
+                    </div>
+                  
                     <Form.Item label="If you have an old prescription, please upload (optional)">
                         <Button onClick={handleUploadclick}>Upload</Button>
                     </Form.Item>

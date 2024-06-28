@@ -11,6 +11,7 @@ import { Button, Form } from 'antd';
 const Registerleft = () => {
     const [state, setstate] = useState([]);
     const [city, setcity] = useState([]);
+    // const [selectedState, setSelectedState] = useState('');
 
     useEffect(() => {
         fetch('https://countriesnow.space/api/v0.1/countries/states', {
@@ -31,24 +32,30 @@ const Registerleft = () => {
         });
       }, []);
 
-      useEffect(() => {
-        fetch('https://countriesnow.space/api/v0.1/countries/cities', {
-          method: 'POST', 
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            country: 'India' 
-          }),
-        })
-        .then(response => response.json())
-        .then(data => {
-          setcity(data.data)
-        })
-        .catch(error => {
-          alert(error)
-        });
-      }, []);
+
+    //   const handleStateChange = (event) => {
+    //     const state = event.target.value;
+    //     setSelectedState(state);
+    //     setcity([]);
+    
+    //     fetch('https://countriesnow.space/api/v0.1/countries/state/cities', {
+    //       method: 'POST',
+    //       headers: {
+    //         'Content-Type': 'application/json',
+    //       },
+    //       body: JSON.stringify({
+    //         country: 'India',
+    //         state: state
+    //       }),
+    //     })
+    //     .then(response => response.json())
+    //     .then(data => {
+    //         setcity(data.data);
+    //     })
+    //     .catch(error => {
+    //       console.log(error)
+    //     });
+    //   };
 
     const [formDataArray, setFormDataArray] = useState(() => {
         const existingData = localStorage.getItem('formDataArray');
@@ -96,6 +103,26 @@ const Registerleft = () => {
             navigate('/Login');
         },
     });
+
+    useEffect(() => {
+        fetch('https://countriesnow.space/api/v0.1/countries/state/cities', {
+          method: 'POST', 
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            country: 'India',
+            state: formik.values.State
+          }),
+        })
+        .then(response => response.json())
+        .then(data => {
+          setcity(data.data)
+        })
+        .catch(error => {
+          alert(error)
+        });
+      }, [formik.values.State]);
 
     const handleUploadClick = () => {
         dispatch(registerUserInput(formik.values));
@@ -184,25 +211,6 @@ const Registerleft = () => {
                         ) : null}
                     </div>
                     <div style={{ marginBottom: '15px' }}>
-                        <label htmlFor="City" style={{ display: 'block', marginBottom: '5px' }}>City:</label>
-                        <select
-                            name="City"
-                            id="City"
-                            onChange={formik.handleChange}
-                            onBlur={formik.handleBlur}
-                            value={formik.values.City}
-                            style={{ width: '100%', padding: '8px', boxSizing: 'border-box' }}
-                        >
-                            <option value="">Select City</option>
-                          {Array.isArray(city)&&city.map((cty,index)=>{
-                            return <option key={index} value={cty}>{cty}</option>
-                          })}
-                        </select>
-                        {formik.touched.City && formik.errors.City ? (
-                            <div style={{ color: 'red', marginTop: '5px' }}>{formik.errors.City}</div>
-                        ) : null}
-                    </div>
-                    <div style={{ marginBottom: '15px' }}>
                         <label htmlFor="State" style={{ display: 'block', marginBottom: '5px' }}>State:</label>
                         <select
                             name="State"
@@ -224,6 +232,26 @@ const Registerleft = () => {
                             <div style={{ color: 'red', marginTop: '5px' }}>{formik.errors.State}</div>
                         ) : null}
                     </div>
+                    <div style={{ marginBottom: '15px' }}>
+                        <label htmlFor="City" style={{ display: 'block', marginBottom: '5px' }}>City:</label>
+                        <select
+                            name="City"
+                            id="City"
+                            onChange={formik.handleChange}
+                            onBlur={formik.handleBlur}
+                            value={formik.values.City}
+                            style={{ width: '100%', padding: '8px', boxSizing: 'border-box' }}
+                        >
+                            <option value="">Select City</option>
+                          {Array.isArray(city)&&city.map((cty,index)=>{
+                            return <option key={index} value={cty}>{cty}</option>
+                          })}
+                        </select>
+                        {formik.touched.City && formik.errors.City ? (
+                            <div style={{ color: 'red', marginTop: '5px' }}>{formik.errors.City}</div>
+                        ) : null}
+                    </div>
+                    
                     
                         {formik.values.Prescription.length === 0 ? (
                             <Form.Item label='If you have old prescription please upload (optional)'>
