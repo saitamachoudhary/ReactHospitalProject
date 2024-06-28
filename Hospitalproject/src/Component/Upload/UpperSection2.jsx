@@ -1,7 +1,5 @@
 import { Layout,Menu,Button} from "antd";
-// import DropdownProfile from "./DropDownProfile";
-import {useNavigate} from 'react-router-dom'
-// import DropDownDoc from "./DropDownDoc";
+import {useNavigate} from 'react-router-dom';
 const{Header}=Layout;
 
 
@@ -11,11 +9,9 @@ const UpperSection2=()=>{
         {key:1,label:'Home'},
         {key:2,label:'About us'},
         {key:3,label:'Services'},
-        // {key:4,label:<DropDownDoc/>},
         {key:5,label:'Contact us'},
       ]
       const NavItem2=[
-        // {key:1,label:<a style={{color:'green'}}>Login</a>},
         {key:2,label:<Button>...</Button>},
         {key:1,label:<Button type="primary" onClick={()=>navigate('/Register')}>CheckOut</Button>},
       ]
@@ -25,14 +21,10 @@ const UpperSection2=()=>{
         style={{
           position: 'sticky',
           top: 0,
-        //   zIndex: 1,
-        //   width: '100%',
           display: 'flex',
           alignItems: 'center',
           justifyContent:'space-between',
           backgroundColor:'white',
-        //   padding:'0 30px',
-        //   boxShadow:'box-shadow: rgba(50, 50, 93, 0.25) 0px 2px 5px -1px, rgba(0, 0, 0, 0.3) 0px 1px 3px -1px'
         }}
       >
         <div style={{flex:2}}>
@@ -42,7 +34,6 @@ const UpperSection2=()=>{
           </div>
         </div>
         <Menu
-          // theme="dark"
           mode="horizontal"
           defaultSelectedKeys={['2']}
           items={NavItem}
@@ -52,9 +43,7 @@ const UpperSection2=()=>{
           }}
         />
          <Menu
-          // theme="dark"
           mode="horizontal"
-          // defaultSelectedKeys={['2']}
           items={NavItem2}
           style={{
             flex: 1,

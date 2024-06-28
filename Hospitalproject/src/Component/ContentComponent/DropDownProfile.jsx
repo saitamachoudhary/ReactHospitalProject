@@ -25,7 +25,7 @@ const DropdownProfile = () => {
         },
         {
           label:<Button onClick={()=>{
-            navigate('/Edit',{state:Data.id})
+            navigate('/Edit',{state:{id:Data.id,boolean:true,boolean2:true}})
           }}>Edit Your Account</Button>
         },
         {

@@ -11,21 +11,44 @@ import { Button, Form } from 'antd';
 const Registerleft = () => {
     const [state, setstate] = useState([]);
     const [city, setcity] = useState([]);
-    const [abc, setabc] = useState({});
-    let config = {
-        cUrl: 'https://api.countrystatecity.in/v1/countries',
-        ckey: 'NHhvOEcyWk50N2Vna3VFTE00bFp3MjFKR0ZEOUhkZlg4RTk1MlJlaA=='
-    }
 
     useEffect(() => {
-        const fetchDatastate = async () => {
-            let apiEndPoint = config.cUrl;
-            let res = await fetch(`${apiEndPoint}/IN/states`, { headers: { "X-CSCAPI-KEY": config.ckey } });
-            let res2 = await res.json();
-            setstate(res2);
-        }
-        fetchDatastate();
-    }, []);
+        fetch('https://countriesnow.space/api/v0.1/countries/states', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            country: 'India'    
+          }),
+        })
+        .then(response => response.json())
+        .then(data => {
+          setstate(data.data.states);
+        })
+        .catch(error => {
+          console.log(error)
+        });
+      }, []);
+
+      useEffect(() => {
+        fetch('https://countriesnow.space/api/v0.1/countries/cities', {
+          method: 'POST', 
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            country: 'India' 
+          }),
+        })
+        .then(response => response.json())
+        .then(data => {
+          setcity(data.data)
+        })
+        .catch(error => {
+          alert(error)
+        });
+      }, []);
 
     const [formDataArray, setFormDataArray] = useState(() => {
         const existingData = localStorage.getItem('formDataArray');
@@ -73,16 +96,6 @@ const Registerleft = () => {
             navigate('/Login');
         },
     });
-
-    useEffect(() => {
-        const fetchDatacity = async () => {
-            let apiEndPoint = config.cUrl;
-            let res = await fetch(`${apiEndPoint}/IN/states/${abc.code}/cities`, { headers: { "X-CSCAPI-KEY": config.ckey } });
-            let res2 = await res.json();
-            setcity(res2);
-        }
-        fetchDatacity();
-    }, [abc]);
 
     const handleUploadClick = () => {
         dispatch(registerUserInput(formik.values));
@@ -182,7 +195,7 @@ const Registerleft = () => {
                         >
                             <option value="">Select City</option>
                           {Array.isArray(city)&&city.map((cty,index)=>{
-                            return <option key={index} value={cty.name}>{cty.name}</option>
+                            return <option key={index} value={cty}>{cty}</option>
                           })}
                         </select>
                         {formik.touched.City && formik.errors.City ? (
@@ -194,11 +207,7 @@ const Registerleft = () => {
                         <select
                             name="State"
                             id="State"
-                            onChange={(e) => {
-                                formik.handleChange(e);
-                                const selectedState = state.find(s => s.name === e.target.value);
-                                setabc({ code: selectedState ? selectedState.iso2 : '' });
-                            }}
+                            onChange={formik.handleChange}
                             onBlur={formik.handleBlur}
                             value={formik.values.State}
                             style={{ width: '100%', padding: '8px', boxSizing: 'border-box' }}
@@ -237,7 +246,8 @@ const Registerleft = () => {
                                 formik.values.Email &&
                                     formik.values.Name &&
                                     formik.values.Password &&
-                                    formik.values.Phone && formik.values.Prescription !== null
+                                    formik.values.Phone && formik.values.City && formik.values.State
+                                     && formik.values.Prescription !== null
                                     ? {}
                                     : { background: 'gray' }
                             }

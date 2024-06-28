@@ -1,4 +1,4 @@
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation} from 'react-router-dom';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { Button, Form } from 'antd';
@@ -13,64 +13,64 @@ const Edit = () => {
     const navigate = useNavigate();
     const location = useLocation();
     const dispatch = useDispatch();
-    const user = location.state;
+    const user = location.state.id;
+    const [retrieveData,setretrieveData]=useState(()=>{
+     const existingData=localStorage.getItem('formDataArray');
+      return existingData?JSON.parse(existingData).find((us)=>us.id===user):[]
+    })
 
-    const config = {
-        cUrl: 'https://api.countrystatecity.in/v1/countries',
-        ckey: 'NHhvOEcyWk50N2Vna3VFTE00bFp3MjFKR0ZEOUhkZlg4RTk1MlJlaA=='
-    };
-
-    useEffect(() => {
-        const fetchStates = async () => {
-            try {
-                let apiEndPoint = config.cUrl;
-                let res = await fetch(`${apiEndPoint}/IN/states`, { headers: { "X-CSCAPI-KEY": config.ckey } });
-                let res2 = await res.json();
-                setStateList(res2);
-            } catch (error) {
-                console.error('Error fetching states:', error);
-            }
-        };
-        fetchStates();
-    }, []);
+     location.state.boolean?dispatch(registerUserInput(retrieveData)):"";
 
     useEffect(() => {
-        const existingData = localStorage.getItem('formDataArray');
-        if (existingData) {
-            const dataArray = JSON.parse(existingData);
-            const userData = dataArray.find((val) => val.id === user);
-            if (userData) {
-                dispatch(registerUserInput(userData));
-            }
-        }
-    }, [user, dispatch]);
+        fetch('https://countriesnow.space/api/v0.1/countries/states', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            country: 'India'    
+          }),
+        })
+        .then(response => response.json())
+        .then(data => {
+            setStateList(data.data.states);
+        })
+        .catch(error => {
+          console.log(error)
+        });
+      }, []);
+
+      useEffect(() => {
+        fetch('https://countriesnow.space/api/v0.1/countries/cities', {
+          method: 'POST', 
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            country: 'India' 
+          }),
+        })
+        .then(response => response.json())
+        .then(data => {
+            setCityList(data.data)
+        })
+        .catch(error => {
+          alert(error)
+        });
+      }, []);
+
 
     const userEditData = useSelector(state => state.userinputReducer.user);
-    useEffect(() => {
-        if (userEditData) {
-            formik.setValues({
-                id: userEditData.id || '',
-                Name: userEditData.Name || '',
-                Email: userEditData.Email || '',
-                Password: userEditData.Password || '',
-                Phone: userEditData.Phone || '',
-                Prescription: userEditData.Prescription || [],
-                City: userEditData.City || '',
-                State: userEditData.State || '',
-            });
-        }
-    }, [userEditData]);
-
     const formik = useFormik({
         initialValues: {
-            id: '',
-            Name: '',
-            Email: '',
-            Password: '',
-            Phone: '',
-            Prescription: [],
-            City: '',
-            State: '',
+            id: userEditData.id||'',
+            Name: userEditData.Name,
+            Email:userEditData.Email||'',
+            Password: userEditData.Password,
+            Phone: userEditData.Phone,
+            Prescription:userEditData.Prescription ||[],
+            City: userEditData.City||'',
+            State: userEditData.State||'',
         },
         enableReinitialize: true,
         validationSchema: Yup.object({
@@ -111,30 +111,17 @@ const Edit = () => {
         },
     });
 
-    useEffect(() => {
-        if (formik.values.State) {
-            const selectedState = stateList.find(s => s.name === formik.values.State);
-            if (selectedState) {
-                const fetchCities = async () => {
-                    try {
-                        let apiEndPoint = config.cUrl;
-                        let res = await fetch(`${apiEndPoint}/IN/states/${selectedState.iso2}/cities`, { headers: { "X-CSCAPI-KEY": config.ckey } });
-                        let res2 = await res.json();
-                        setCityList(res2);
-                    } catch (error) {
-                        console.error('Error fetching cities:', error);
-                    }
-                };
-                fetchCities();
-            }
-        }
-    }, [formik.values.State, stateList]);
 
     const handleDeleteClick = (id) => {
         dispatch(handleDeletePrescription(id));
         const updatedPrescription = formik.values.Prescription.filter(item => item.id !== id);
         formik.setFieldValue('Prescription', updatedPrescription);
     };
+
+    const handleUploadclick=()=>{
+     dispatch(registerUserInput(formik.values));
+     navigate('/Upload',{state:{id:user,boolean:location.state.boolean,boolean2:location.state.boolean2}})
+    }
 
     return (
         <div style={{ height: '100vh', width: '100%' }}>
@@ -222,7 +209,7 @@ const Edit = () => {
                         >
                             <option value="">Select City</option>
                             {cityList.map((city, index) => (
-                                <option key={index} value={city.name}>{city.name}</option>
+                                <option key={index} value={city}>{city}</option>
                             ))}
                         </select>
                         {formik.touched.City && formik.errors.City ? (
@@ -234,25 +221,7 @@ const Edit = () => {
                         <select
                             name="State"
                             id="State"
-                            onChange={(e) => {
-                                formik.handleChange(e);
-                                const selectedState = stateList.find(s => s.name === e.target.value);
-                                setCityList([]); // Clear city list when state changes
-                                if (selectedState) {
-                                    setCityList([]);
-                                    const fetchCities = async () => {
-                                        try {
-                                            let apiEndPoint = config.cUrl;
-                                            let res = await fetch(`${apiEndPoint}/IN/states/${selectedState.iso2}/cities`, { headers: { "X-CSCAPI-KEY": config.ckey } });
-                                            let res2 = await res.json();
-                                            setCityList(res2);
-                                        } catch (error) {
-                                            console.error('Error fetching cities:', error);
-                                        }
-                                    };
-                                    fetchCities();
-                                }
-                            }}
+                            onChange={formik.handleChange}
                             onBlur={formik.handleBlur}
                             value={formik.values.State}
                             style={{ width: '100%', padding: '8px', boxSizing: 'border-box' }}
@@ -269,7 +238,7 @@ const Edit = () => {
                         ) : null}
                     </div>
                     <Form.Item label="If you have an old prescription, please upload (optional)">
-                        <Button onClick={() => navigate('/Upload')}>Upload</Button>
+                        <Button onClick={handleUploadclick}>Upload</Button>
                     </Form.Item>
                     {formik.values.Prescription.map((val, index) => (
                         <div key={index} style={{ display: 'flex', alignItems: 'center' }}>
@@ -285,10 +254,10 @@ const Edit = () => {
                                 formik.values.Email &&
                                 formik.values.Name &&
                                 formik.values.Password &&
-                                formik.values.Phone &&
-                                formik.values.Prescription.length !== 0
-                                    ? {}
-                                    : { background: 'gray' }
+                                formik.values.Phone && formik.values.City && formik.values.State
+                                 && formik.values.Prescription !== null
+                                ? {}
+                                : { background: 'gray' }
                             }
                         >
                             Submit
