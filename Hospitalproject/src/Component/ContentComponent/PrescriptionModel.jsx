@@ -21,14 +21,13 @@ const PrescriptionModel = () => {
         Prescription
       </Button>
       <Modal title="Prescription" open={isModalOpen} onOk={handleOk} onCancel={handleCancel}>
-      {registerData.prescription!=null&&registerData.prescription.map((val,index)=>{
-        console.log(val)
+      {registerData.prescription.length!==0?registerData.prescription!=null&&registerData.prescription.map((val,index)=>{
           return(
             <div key={index}>
-            <img src={val.url} alt={val.file} style={{ maxWidth: '100%' }} />
+            <img src={val.url} alt={val.file} style={{ maxWidth: '50%' }} />
           </div>
           )
-      })}
+      }):<h2>No Prescription Added</h2>}
           
       </Modal>
     </>

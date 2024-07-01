@@ -4,7 +4,7 @@ import UploadFile from "./UploadFile";
 
 const UploadLeftSection=()=>{
     return(
-        <div style={{width:'50vw',height:'80.5vh',display:'flex',alignItems:'center',justifyContent:'center'}}>
+        <div style={{width:'50vw',height:'',display:'flex',alignItems:'center',justifyContent:'center'}}>
             <div>
              <div>
              <h1>Upload Prescription</h1>

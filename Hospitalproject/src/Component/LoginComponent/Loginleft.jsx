@@ -20,7 +20,7 @@ const Loginleft = () => {
   const success = () => {
     messageApi.open({
       type: 'success',
-      content: 'This is a success message',
+      content: 'Successfull Login',
     });
   };
 
@@ -50,7 +50,7 @@ const Loginleft = () => {
   };
 
   return (
-    <div style={{ height: '', width: '60vw', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+    <div style={{ height: '', width: '60vw', display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
       <Form
         name="basic"
         style={{ maxWidth: 600 }}
@@ -73,7 +73,7 @@ const Loginleft = () => {
             },
           ]}
         >
-          <Input value={email} onChange={(e) => setEmail(e.target.value)} />
+          <Input placeholder='ex:@example.com' value={email} onChange={(e) => setEmail(e.target.value)} />
         </Form.Item>
 
         <Form.Item
@@ -86,7 +86,7 @@ const Loginleft = () => {
             },
           ]}
         >
-          <Input.Password value={password} onChange={(e) => setPassword(e.target.value)} />
+          <Input.Password placeholder='ex:@123Abc#' value={password} onChange={(e) => setPassword(e.target.value)} />
         </Form.Item>
 
         <Form.Item>

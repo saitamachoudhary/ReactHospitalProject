@@ -1,4 +1,3 @@
-import React from "react";
 import UploadLeftSection from "./UploadLeftSection";
 import UploadRightSection from "./UploadRightSection";
 
@@ -6,7 +5,7 @@ import UploadRightSection from "./UploadRightSection";
 
 const UploadContent=()=>{
     return(
-        <div style={{display:'flex'}}>
+        <div style={{display:'flex',height:'inherit'}}>
             <UploadLeftSection/>
             <UploadRightSection/>
         </div>

@@ -1,11 +1,11 @@
 import { useNavigate, useLocation} from 'react-router-dom';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
-import { Button, Form } from 'antd';
+import { Button, Form ,Col, Divider, Row } from 'antd';
 import { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { registerUserInput, handleDeletePrescription,handleEmptyuser} from '../../Store/UserInputSlice';
-import { StepBackwardOutlined, DeleteOutlined } from '@ant-design/icons';
+import { StepBackwardOutlined, DeleteOutlined} from '@ant-design/icons';
 
 const Edit = () => {
     const [stateList, setStateList] = useState([]);
@@ -134,8 +134,9 @@ const Edit = () => {
                 }}
                 scrollToFirstError
             >
+                <StepBackwardOutlined style={{position:'absolute',top:'33px',fontSize:'20px'}} onClick={() => navigate('/')}/>
                 <h1 style={{ textAlign: 'center' }}>Edit Your Account Details</h1>
-                <Button onClick={() => navigate('/')}><StepBackwardOutlined /> Back</Button>
+                {/* <Button onClick={() => navigate('/')}><StepBackwardOutlined /> Back</Button> */}
                 <div style={{ maxWidth: '600px', padding: '20px', border: '1px solid #ccc', borderRadius: '5px', backgroundColor: 'white' }}>
                     <div style={{ marginBottom: '15px' }}>
                         <label htmlFor="Name" style={{ display: 'block', marginBottom: '5px' }}>Username:</label>
@@ -143,6 +144,7 @@ const Edit = () => {
                             type="text"
                             name="Name"
                             id="Name"
+                             placeholder='ex:Abhinav Choudhary'
                             onChange={formik.handleChange}
                             onBlur={formik.handleBlur}
                             value={formik.values.Name}
@@ -158,6 +160,7 @@ const Edit = () => {
                             type="email"
                             name="Email"
                             id="Email"
+                            placeholder='ex:@example.com'
                             onChange={formik.handleChange}
                             onBlur={formik.handleBlur}
                             value={formik.values.Email}
@@ -173,6 +176,7 @@ const Edit = () => {
                             type="password"
                             name="Password"
                             id="Password"
+                            placeholder='ex:@123Abc!#'
                             onChange={formik.handleChange}
                             onBlur={formik.handleBlur}
                             value={formik.values.Password}
@@ -184,15 +188,25 @@ const Edit = () => {
                     </div>
                     <div style={{ marginBottom: '15px' }}>
                         <label htmlFor="Phone" style={{ display: 'block', marginBottom: '5px' }}>Phone:</label>
-                        <input
+                       <div  style={{ display: 'flex', alignItems: 'center' }}>
+                       <span style={{ padding: '8px', background: '#eee'}}>+91</span>
+                       <input
                             type="text"
                             name="Phone"
                             id="Phone"
-                            onChange={formik.handleChange}
+                             placeholder='ex:1234567890'
+                            // onChange={formik.handleChange}
+                            onChange={(e) => {
+                                const re = /^[0-9\b]+$/;
+                                if (e.target.value === '' || re.test(e.target.value)) {
+                                    formik.handleChange(e);
+                                }
+                            }}
                             onBlur={formik.handleBlur}
                             value={formik.values.Phone}
                             style={{ width: '100%', padding: '8px', boxSizing: 'border-box' }}
                         />
+                       </div>
                         {formik.touched.Phone && formik.errors.Phone ? (
                             <div style={{ color: 'red', marginTop: '5px' }}>{formik.errors.Phone}</div>
                         ) : null}
@@ -241,12 +255,26 @@ const Edit = () => {
                     <Form.Item label="If you have an old prescription, please upload (optional)">
                         <Button onClick={handleUploadclick}>Upload</Button>
                     </Form.Item>
-                    {formik.values.Prescription.map((val, index) => (
-                        <div key={index} style={{ display: 'flex', alignItems: 'center' }}>
-                            <p>{val.file}</p>
-                            <DeleteOutlined style={{ marginLeft: '10px' }} onClick={() => handleDeleteClick(val.id)} />
-                        </div>
-                    ))}
+                    {formik.values.Prescription.length === 0 ? (
+                        null
+                    ) : (
+                        <>
+                            <Divider orientation="left">File</Divider>
+                            {
+                                formik.values.Prescription.map((val, index) => (
+                                    <>
+                                        <Row>
+                                            <Col span={8}>{val.file.length > 20 ? `${val.file.substring(0, 20)}...` : val.file}</Col>
+                                            <Col span={8} offset={8} style={{ textAlign: 'right' }}>
+                                                <DeleteOutlined style={{ marginLeft: '10px' }} onClick={() => handleDeleteClick(val.id)} />
+                                            </Col>
+                                        </Row>
+                                        <hr style={{ border: 'none', height: '1px', backgroundColor: '#f2f2f2', margin: '20px 0' }} />
+                                    </>
+                                ))
+                            }
+                        </>
+                    )}
                     <Form.Item>
                         <Button
                             type="primary"

@@ -1,5 +1,3 @@
-import React from 'react';
-
 const Registerright=()=>{
     return (
         <div style={{height:'',width:'40vw',backgroundColor:"#3758F9",padding:'20px 20px'}}>
@@ -8,7 +6,7 @@ const Registerright=()=>{
             <h3 style={{fontSize:'1.5rem',color:'white'}}>HealthCare</h3>
           </div>
           <div style={{display:'flex',alignItems:'left',justifyContent:'center'}}>
-          <img style={{width:'450px'}} src="src\Component\Images\vecteezy_patient-with-doctor-and-nurse_24760222.png" alt="" />
+          <img style={{width:'410px'}} src="src\Component\Images\vecteezy_patient-with-doctor-and-nurse_24760222.png" alt="" />
           </div>
           <div>
             <h1 style={{color:'white',textAlign:'left',fontWeight:'300',fontSize:'40px',fontStyle:'italic'}}>Let's protect your self and those around you.</h1>

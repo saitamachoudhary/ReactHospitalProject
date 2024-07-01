@@ -1,4 +1,3 @@
-import React from 'react';
 import { DownOutlined } from '@ant-design/icons';
 import { Dropdown, Space } from 'antd';
 import Profile from './Profile';

@@ -3,6 +3,7 @@ import { DownOutlined } from '@ant-design/icons';
 import { Dropdown, Space,Button} from 'antd';
 import PrescriptionModel from './PrescriptionModel';
 import { useNavigate } from 'react-router-dom';
+import Profile from '../Upload/Profile';
 
 const DropdownProfile = () => {
     const[Data,setData]=React.useState(JSON.parse(localStorage.getItem("loginData")));
@@ -52,7 +53,7 @@ const DropdownProfile = () => {
   >
     <a onClick={(e) => e.preventDefault()}>
       <Space>
-        Profile
+        <Profile/>
         <DownOutlined />
       </Space>
     </a>

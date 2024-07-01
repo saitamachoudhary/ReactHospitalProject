@@ -40,16 +40,16 @@ const Content1 = () => (
             <div className="innerdiv11">
               <img style={{ width: '26px' }} src="src\Component\Images\phone-icon-938 1.png" alt="" />
             </div>
-            <div className="innerdiv12">
+            <div className="innerdiv12" style={{marginLeft:'5px'}}>
               <Typography.Title style={{ fontSize: '14px' }}>Phone Number</Typography.Title>
               <Typography.Title style={{ fontSize: '14px', marginTop: '0' }}>+123 456 789</Typography.Title>
             </div>
           </div>
           <div className="div2" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             <div className="innerdiv21">
-              <img style={{ width: '26px' }} src="src\Component\Images\on-time-icon 1.png" alt="" />
+              <img style={{ width: '26px'}} src="src\Component\Images\on-time-icon 1.png" alt="" />
             </div>
-            <div className="innerdiv22">
+            <div className="innerdiv22" style={{marginLeft:'5px'}}>
               <Typography.Title style={{ fontSize: '14px' }}>Open Everyday</Typography.Title>
               <Typography.Title style={{ fontSize: '14px', marginTop: '0' }} level={5}>24*7</Typography.Title>
             </div>
